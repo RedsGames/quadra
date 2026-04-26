@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        body { margin: 0; background-color: #1e1e2d; overflow: hidden; }
+        #chart-container { width: 100vw; height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="chart-container"></div>
+    <script>
+        var chart = echarts.init(document.getElementById('chart-container'));
+        function updateChart(optionJson) {
+            try {
+                const option = JSON.parse(optionJson);
+                option.backgroundColor = '#1e1e2d';
+                chart.setOption(option);
+            } catch(e) { console.error(e); }
+        }
+        window.onresize = function() { chart.resize(); };
+    </script>
+</body>
+</html>
