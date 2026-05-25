@@ -1,66 +1,41 @@
-import uuid
-from src.models import Trip, Expense, Category
-from src.repository import TripRepository
-from src.manager import TripManager
-from src.calculator import BudgetCalculator
-from src.exporter import ReportExporter
+import sys
+from src.infrastructure.repositories.json_trip_repository import JsonTripRepository
+from src.infrastructure.exporters.txt_report_exporter import TxtReportExporter
+from src.application.use_cases.create_trip import CreateTripUseCase
+from src.application.use_cases.update_trip import UpdateTripUseCase
+from src.application.use_cases.search_trips import SearchTripsUseCase
+from src.application.use_cases.add_expense import AddExpenseUseCase
+from src.application.use_cases.get_trip_summary import GetTripSummaryUseCase
+from src.application.use_cases.export_report import ExportReportUseCase
+from src.application.use_cases.manage_expenses import ManageExpensesUseCase
+from src.infrastructure.cli.console_form import ConsoleForm, ExitSignal
 
-class CLI:
-    def __init__(self):
-        self.manager = TripManager(TripRepository())
-
-    def run(self):
-        while True:
-            print("\n1. Новая поездка\n2. Добавить расход\n3. Показать бюджет\n4. Экспорт отчета\n5. Выход")
-            choice = input("> ")
-            if choice == "1":
-                try:
-                    name = input("Название: ")
-                    dates = input("Даты: ")
-                    people = int(input("Количество человек: "))
-                    if people <= 0: raise ValueError
-                    self.manager.add_trip(Trip(str(uuid.uuid4()), name, dates, people))
-                except ValueError:
-                    print("Ошибка: Количество человек должно быть числом > 0.")
-            elif choice == "2":
-                name = input("Название поездки: ")
-                trip = self.manager.get_trip_by_name(name)
-                if trip:
-                    try:
-                        exp_name = input("Название расхода: ")
-                        amount = float(input("Сумма: "))
-                        while True:
-                            print("1. Транспорт, 2. Жильё, 3. Еда, 4. Развлечения, 5. Подушка безопасности, 6. Прочее")
-                            cat_choice = input("Выберите номер категории (1-6): ")
-                            cat = Category.from_input(cat_choice)
-                            
-                            if cat:
-                                if cat == Category.OTHER:
-                                    custom = input("Введите название для категории (или нажмите Enter для 'Прочее'): ")
-                                    if custom.strip():
-                                        cat = Category.CUSTOM
-                                        cat._value_ = custom
-                                trip.expenses.append(Expense(exp_name, amount, cat))
-                                self.manager.repo.save_all(self.manager.trips)
-                                break
-                            else:
-                                print("Ошибка: Выберите номер от 1 до 6.")
-                    except ValueError:
-                        print("Ошибка: Сумма должна быть числом.")
-            elif choice == "3":
-                name = input("Название поездки: ")
-                trip = self.manager.get_trip_by_name(name)
-                if trip:
-                    print(f"Общая сумма: {BudgetCalculator.calculate_total(trip)}")
-                    print(f"На человека: {BudgetCalculator.calculate_per_person(trip)}")
-            elif choice == "4":
-                name = input("Название поездки: ")
-                trip = self.manager.get_trip_by_name(name)
-                if trip:
-                    ReportExporter.export_to_txt(trip, f"report_{trip.name}.txt")
-                    print("Отчет сохранен.")
-            elif choice == "5":
-                break
+def main() -> None:
+    repository = JsonTripRepository()
+    exporter = TxtReportExporter()
+    
+    create_use_case = CreateTripUseCase(repository)
+    update_use_case = UpdateTripUseCase(repository)
+    search_use_case = SearchTripsUseCase(repository)
+    add_expense_use_case = AddExpenseUseCase(repository)
+    summary_use_case = GetTripSummaryUseCase(repository)
+    export_use_case = ExportReportUseCase(summary_use_case, exporter)
+    manage_expenses_use_case = ManageExpensesUseCase(repository)
+    
+    form = ConsoleForm(
+        create_use_case,
+        update_use_case,
+        search_use_case,
+        add_expense_use_case,
+        summary_use_case,
+        export_use_case,
+        manage_expenses_use_case
+    )
+    
+    try:
+        form.run()
+    except ExitSignal:
+        print("\nЗавершение работы по требованию пользователя. До встречи!")
 
 if __name__ == "__main__":
-    CLI().run()
+    main()

@@ -1,38 +1,107 @@
 [
-    {
-        "id": "c548760c-26c1-4327-a09a-1a3a21e2efad",
-        "name": "\u0430\u043b\u0435\u043a\u0441",
-        "dates": "13.05.2022",
-        "people_count": 23,
-        "expenses": [
-            {
-                "name": "15000",
-                "amount": 15000.0,
-                "category": "\u0415\u0434\u0430"
-            },
-            {
-                "name": "1",
-                "amount": 11111.0,
-                "category": "\u041f\u0440\u043e\u0447\u0435\u0435"
-            },
-            {
-                "name": "\u043f\u043e\u043f\u0430",
-                "amount": 5.0,
-                "category": "popi"
-            }
-        ]
-    },
-    {
-        "id": "7e36baf7-bc5e-4f43-92a8-a3b5b8857149",
-        "name": "12",
-        "dates": "13.05.2022",
-        "people_count": 5,
-        "expenses": [
-            {
-                "name": "t",
-                "amount": 3443.0,
-                "category": "popi"
-            }
-        ]
-    }
+  {
+    "name": "сочи",
+    "start_date": "2026-05-22",
+    "end_date": "2026-05-27",
+    "people_count": 2,
+    "ticket_price_per_person": 960.0,
+    "expenses": [
+      {
+        "amount": 5500.0,
+        "category": 3,
+        "custom_name": null
+      },
+      {
+        "amount": 800.0,
+        "category": 1,
+        "custom_name": null
+      },
+      {
+        "amount": 678.0,
+        "category": 5,
+        "custom_name": null
+      },
+      {
+        "amount": 7999.0,
+        "category": 2,
+        "custom_name": null
+      },
+      {
+        "amount": 35.0,
+        "category": 6,
+        "custom_name": "платный туалет"
+      }
+    ]
+  },
+  {
+    "name": "СОЧИИИ",
+    "start_date": "2026-05-30",
+    "end_date": "2026-07-24",
+    "people_count": 6,
+    "ticket_price_per_person": 999.0,
+    "expenses": [
+      {
+        "amount": 777.0,
+        "category": 6,
+        "custom_name": "пекарняяяя"
+      }
+    ]
+  },
+  {
+    "name": "Сочи",
+    "start_date": "2026-05-24",
+    "end_date": "2026-05-28",
+    "people_count": 2,
+    "ticket_price_per_person": 4500.0,
+    "expenses": [
+      {
+        "amount": 2500.0,
+        "category": 1,
+        "custom_name": null
+      },
+      {
+        "amount": 800.0,
+        "category": 6,
+        "custom_name": "Сувениры"
+      }
+    ]
+  },
+  {
+    "name": "Соликамск",
+    "start_date": "2026-12-12",
+    "end_date": "2122-11-12",
+    "people_count": 1,
+    "ticket_price_per_person": 1.0,
+    "expenses": []
+  },
+  {
+    "name": "Соликамск",
+    "start_date": "2026-11-13",
+    "end_date": "2026-11-16",
+    "people_count": 2,
+    "ticket_price_per_person": 800.0,
+    "expenses": []
+  },
+  {
+    "name": "qw",
+    "start_date": "2026-07-12",
+    "end_date": "2026-08-16",
+    "people_count": 3,
+    "ticket_price_per_person": 55555.0,
+    "expenses": [
+      {
+        "amount": 4000.0,
+        "category": 1,
+        "custom_name": null
+      }
+    ]
+  },
+  {
+    "name": "Соль",
+    "start_date": "2026-08-11",
+    "end_date": "2026-10-11",
+    "people_count": 2,
+    "ticket_price_per_person": 800.0,
+    "expenses": []
+  }
 ]

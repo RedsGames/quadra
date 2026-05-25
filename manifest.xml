@@ -1,0 +1,95 @@
+<manifest>
+    <context>
+        <project_name>Trip Budget Calculator</project_name>
+        <tech_stack>
+            <language>Python 3.10+</language>
+            <libraries>Standard Library only</libraries>
+        </tech_stack>
+        <goals>
+            <goal>Calculate trip budget with permanent JSON storage, automatic export to clean TXT files, full multiple trip management, interactive date validation and full expense editing/deletion capabilities.</goal>
+        </goals>
+    </context>
+    <glossary>
+        <term name="Trip">Core domain entity representing trip metadata, transport tickets and associated expenses.</term>
+        <term name="Expense">Domain object representing an individual financial charge categorized by type.</term>
+        <term name="ITripRepository">Repository interface isolating trip storage logic from the application core.</term>
+        <term name="IManageExpensesUseCase">Use Case interface for updating and deleting specific expense items.</term>
+    </glossary>
+    <system_map>
+        <file path="src/domain/value_objects/expense_category.py">
+            <class name="ExpenseCategory" parent="Enum" />
+        </file>
+        <file path="src/domain/entities/expense.py">
+            <class name="Expense">
+                <method name="__init__" params="amount: float, category: ExpenseCategory, custom_name: str | None" returns="None"/>
+                <property name="amount" returns="float"/>
+                <property name="category" returns="ExpenseCategory"/>
+                <property name="name" returns="str"/>
+            </class>
+        </file>
+        <file path="src/domain/entities/trip.py">
+            <class name="Trip">
+                <method name="__init__" params="name: str, start_date: date, end_date: date, people_count: int, ticket_price_per_person: float" returns="None"/>
+                <method name="update_metadata" params="name: str, start_date: date, end_date: date, people_count: int, ticket_price_per_person: float" returns="None"/>
+                <method name="update_expense_amount" params="index: int, amount: float" returns="None"/>
+                <method name="update_expense_category" params="index: int, category: ExpenseCategory, custom_name: str | None" returns="None"/>
+                <method name="delete_expense" params="index: int" returns="None"/>
+                <method name="add_expense" params="expense: Expense" returns="None"/>
+                <method name="calculate_transport_total" returns="float"/>
+                <method name="calculate_expenses_total" returns="float"/>
+                <method name="calculate_grand_total" returns="float"/>
+                <method name="calculate_cost_per_person" returns="float"/>
+            </class>
+        </file>
+        <file path="src/domain/repositories/i_trip_repository.py">
+            <interface name="ITripRepository" />
+        </file>
+        <file path="src/application/dto/trip_dto.py">
+            <class name="TripCreateRequest"/>
+            <class name="TripUpdateRequest"/>
+            <class name="TripSearchResultItem"/>
+            <class name="ExpenseItemResponse"/>
+            <class name="TripSummaryResponse"/>
+        </file>
+        <file path="src/application/dto/expense_dto.py">
+            <class name="ExpenseCreateRequest"/>
+        </file>
+        <file path="src/application/interfaces/i_report_exporter.py">
+            <interface name="IReportExporter"/>
+        </file>
+        <file path="src/application/interfaces/i_create_trip_use_case.py">
+            <interface name="ICreateTripUseCase"/>
+        </file>
+        <file path="src/application/interfaces/i_update_trip_use_case.py">
+            <interface name="IUpdateTripUseCase"/>
+        </file>
+        <file path="src/application/interfaces/i_search_trips_use_case.py">
+            <interface name="ISearchTripsUseCase"/>
+        </file>
+        <file path="src/application/interfaces/i_export_report_use_case.py">
+            <interface name="IExportReportUseCase"/>
+        </file>
+        <file path="src/application/interfaces/i_add_expense_use_case.py">
+            <interface name="IAddExpenseUseCase"/>
+        </file>
+        <file path="src/application/interfaces/i_manage_expenses_use_case.py">
+            <interface name="IManageExpensesUseCase">
+                <method name="update_amount" params="index: int, amount: float" returns="None"/>
+                <method name="update_category" params="index: int, category_index: int, custom_name: str | None" returns="None"/>
+                <method name="delete_expense" params="index: int" returns="None"/>
+            </interface>
+        </file>
+        <file path="src/application/interfaces/i_get_trip_summary_use_case.py">
+            <interface name="IGetTripSummaryUseCase"/>
+        </file>
+        <file path="src/infrastructure/repositories/json_trip_repository.py">
+            <class name="JsonTripRepository" implements="ITripRepository"/>
+        </file>
+        <file path="src/infrastructure/exporters/txt_report_exporter.py">
+            <class name="TxtReportExporter" implements="IReportExporter"/>
+        </file>
+        <file path="tests.py">
+            <class name="TestTripCalculations" parent="unittest.TestCase"/>
+        </file>
+    </system_map>
+</manifest>
