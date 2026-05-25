@@ -1,0 +1,38 @@
+# Виртуальное окружение
+.venv/
+venv/
+env/
+
+# Секреты
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Тесты и покрытие
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Данные (создаются автоматически)
+data/transactions.json
+data/budgets.json
+data/email_jobs.json
+data/qr_*.png
+
+# Примеры (учебные материалы, не нужны в репо)
+Пример README.md
+Пример report.md
+Пример отчёт по багам.txt
+Пример ЧЕК-ЛИСТ_СТУДЕНТА.md
+Copy of Пример report.md

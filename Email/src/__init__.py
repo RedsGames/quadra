@@ -1,0 +1,1 @@
+"""Email auto-sender package."""

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Email — Quadra{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>📧 Email-рассылка</h1>
+  <p>Отправляй письма и отчёты прямо из приложения</p>
+</div>
+
+{% if not configured %}
+<div class="alert alert-yellow anim-up" style="margin-bottom:24px;">
+  ⚠️ Email не настроен — заполни <code style="background:rgba(0,0,0,.06);padding:1px 6px;border-radius:4px;">.env</code> и перезапусти сервер.
+</div>
+{% endif %}
+
+{% if last_result is defined %}
+<div class="alert {% if last_result.status == 'sent' %}alert-green{% else %}alert-red{% endif %} anim-up" style="margin-bottom:24px;">
+  {% if last_result.status == 'sent' %}
+    ✅ Письмо отправлено на <strong>{{ last_result.to }}</strong>
+  {% else %}
+    ❌ Ошибка отправки: {{ last_result.error }}
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="grid-2" style="align-items:start;">
+
+  <!-- Форма -->
+  <div class="card anim-up">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:18px;">Отправить письмо</h2>
+    <form method="post" action="/email/send" style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label class="field-label">Кому</label>
+        <input name="to" type="email" class="input" placeholder="recipient@example.com" required>
+      </div>
+      <div>
+        <label class="field-label">Тема</label>
+        <input name="subject" class="input" placeholder="Тема письма" required>
+      </div>
+      <div>
+        <label class="field-label">Текст (HTML поддерживается)</label>
+        <textarea name="body" class="textarea" placeholder="<b>Привет!</b><br>Текст письма…" required style="min-height:140px;"></textarea>
+      </div>
+      <button type="submit" class="btn btn-block" {% if not configured %}disabled{% endif %}
+        style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.3);">
+        📤 Отправить сейчас
+      </button>
+    </form>
+
+    <div class="divider"></div>
+
+    <div style="background:rgba(108,99,255,.04);border:1px solid rgba(108,99,255,.12);border-radius:var(--radius-sm);padding:14px;">
+      <p style="font-size:.8rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">💡 Интеграции</p>
+      <p style="font-size:.85rem;color:var(--c-muted);line-height:1.6;">
+        Из раздела <a href="/tracker" style="color:var(--c-primary);">Трекера</a> можно отправить финансовый отчёт одной кнопкой.<br>
+        Из <a href="/budget" style="color:var(--c-primary);">Бюджета</a> — план поездки на email.
+      </p>
+    </div>
+  </div>
+
+  <!-- История -->
+  <div class="card reveal">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:16px;">История отправок</h2>
+    {% if jobs %}
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      {% for job in jobs|reverse %}
+      <div style="padding:12px 14px;background:var(--c-bg);border-radius:var(--radius-sm);animation:fadeUp .3s {{ loop.index0 * 0.05 }}s ease both;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-weight:600;font-size:.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px;">{{ job.to }}</span>
+          <span class="badge {% if job.status == 'sent' %}badge-green{% elif job.status == 'scheduled' %}badge-blue{% else %}badge-red{% endif %}">
+            {{ job.status }}
+          </span>
+        </div>
+        <div style="font-size:.75rem;color:var(--c-muted);">{{ job.subject }}</div>
+        {% if job.error is defined %}<div style="font-size:.75rem;color:var(--c-red);margin-top:4px;">{{ job.error }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="emoji">📭</div><p>Писем пока не отправлялось</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

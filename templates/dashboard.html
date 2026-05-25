@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Quadra{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Добро пожаловать 👋</h1>
+  <p>Все модули на одной странице</p>
+</div>
+
+<!-- Stat-карточки -->
+<div class="grid-4" style="margin-bottom:28px;">
+  <div class="stat-card anim-up">
+    <div class="accent" style="background:var(--c-primary)"></div>
+    <div class="icon" style="background:rgba(108,99,255,.1); color:var(--c-primary)">💰</div>
+    <div class="value {% if balance >= 0 %}text-green{% else %}text-red{% endif %}"
+         id="balanceCounter" data-target="{{ balance }}">0</div>
+    <div class="label">Текущий баланс, ₽</div>
+  </div>
+  <div class="stat-card anim-up-1">
+    <div class="accent" style="background:#3b82f6"></div>
+    <div class="icon" style="background:rgba(59,130,246,.1); color:#3b82f6">📊</div>
+    <div class="value" id="txCounter" data-target="{{ transactions|length }}">0</div>
+    <div class="label">Транзакций</div>
+  </div>
+  <div class="stat-card anim-up-2">
+    <div class="accent" style="background:var(--c-yellow)"></div>
+    <div class="icon" style="background:rgba(245,158,11,.1); color:var(--c-yellow)">✈️</div>
+    <div class="value" id="tripCounter" data-target="{{ trips|length }}">0</div>
+    <div class="label">Поездок</div>
+  </div>
+  <div class="stat-card anim-up-3">
+    <div class="accent" style="background:#8b5cf6"></div>
+    <div class="icon" style="background:rgba(139,92,246,.1); color:#8b5cf6">📧</div>
+    <div class="value" id="emailCounter" data-target="{{ email_jobs|length }}">0</div>
+    <div class="label">Писем в очереди</div>
+  </div>
+</div>
+
+<!-- Быстрые действия -->
+<div style="margin-bottom:28px;" class="anim-up-2">
+  <p style="font-size:.8rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">Быстрые действия</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a href="/tracker" class="btn btn-primary">💰 Добавить транзакцию</a>
+    <a href="/qr"      class="btn btn-green">📱 Создать QR-код</a>
+    <a href="/budget"  class="btn" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 4px 14px rgba(245,158,11,.3);">✈️ Новая поездка</a>
+    <a href="/email"   class="btn" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.3);">📧 Отправить письмо</a>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- Последние транзакции -->
+  <div class="card reveal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <h2 style="font-size:1rem;font-weight:700;">Последние транзакции</h2>
+      <a href="/tracker" style="font-size:.8rem;color:var(--c-primary);text-decoration:none;font-weight:600;">Все →</a>
+    </div>
+    {% if transactions %}
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      {% for t in transactions %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--c-bg);border-radius:var(--radius-sm);transition:background .2s;"
+           onmouseover="this.style.background='rgba(108,99,255,.05)'" onmouseout="this.style.background='var(--c-bg)'">
+        <div>
+          <div style="font-weight:600;font-size:.875rem;">{{ t.category }}</div>
+          <div style="font-size:.75rem;color:var(--c-muted);">{{ t.date }} · {{ t.description }}</div>
+        </div>
+        <div style="font-weight:700;font-size:.95rem;color:{% if t.type == 'income' %}var(--c-green){% else %}var(--c-red){% endif %}">
+          {% if t.type == 'income' %}+{% else %}−{% endif %}{{ "%.0f"|format(t.amount) }} ₽
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="emoji">📭</div><p>Транзакций пока нет</p></div>
+    {% endif %}
+  </div>
+
+  <!-- Активные поездки -->
+  <div class="card reveal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <h2 style="font-size:1rem;font-weight:700;">Активные поездки</h2>
+      <a href="/budget" style="font-size:.8rem;color:var(--c-primary);text-decoration:none;font-weight:600;">Все →</a>
+    </div>
+    {% if trips %}
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      {% for trip in trips %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--c-bg);border-radius:var(--radius-sm);">
+        <div>
+          <div style="font-weight:600;font-size:.875rem;">{{ trip.name }}</div>
+          <div style="font-size:.75rem;color:var(--c-muted);">→ {{ trip.destination }}</div>
+        </div>
+        <a href="/budget/{{ trip.id }}"
+           style="font-size:.85rem;font-weight:700;color:var(--c-yellow);text-decoration:none;">
+          {{ "%.0f"|format(trip.total_base) }} {{ trip.currency }}
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><div class="emoji">🗺️</div><p>Поездок пока нет</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function animateCounter(el) {
+  const target = parseFloat(el.dataset.target) || 0;
+  const isFloat = target % 1 !== 0;
+  const duration = 900;
+  const start = performance.now();
+  const startVal = 0;
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    const val = startVal + (target - startVal) * ease;
+    el.textContent = isFloat
+      ? val.toLocaleString('ru', {minimumFractionDigits:2, maximumFractionDigits:2})
+      : Math.round(val).toLocaleString('ru');
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+document.querySelectorAll('[id$="Counter"]').forEach(animateCounter);
+</script>
+{% endblock %}

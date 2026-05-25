@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Еженедельный отчёт — неделя {{ week_number }}{% endblock %}
+{% block subtitle %}{{ date_from }} — {{ date_to }}{% endblock %}
+
+{% block content %}
+<p>Добрый день, <strong>{{ recipient_name | default("Коллеги") }}</strong>!</p>
+<p>Итоговый отчёт за <strong>неделю №{{ week_number }}</strong> ({{ date_from }} — {{ date_to }}).</p>
+
+<h3>Итоги недели — план/факт</h3>
+<table>
+  <thead>
+    <tr><th>Показатель</th><th>Факт</th><th>План</th><th>Выполнение</th></tr>
+  </thead>
+  <tbody>
+    {% for row in summary | default([]) %}
+    <tr>
+      <td>{{ row.name }}</td>
+      <td>{{ row.actual }}</td>
+      <td>{{ row.plan }}</td>
+      <td class="{{ 'positive' if row.pct >= 100 else 'negative' }}">{{ row.pct }}%</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" style="text-align:center;color:#aaa">Нет данных</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if top_items %}
+<h3>Топ-{{ top_items | length }} событий недели</h3>
+<ol>{% for item in top_items %}<li>{{ item }}</li>{% endfor %}</ol>
+{% endif %}
+{% endblock %}

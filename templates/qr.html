@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}QR-коды — Quadra{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>📱 Генератор QR-кодов</h1>
+  <p>Создавай QR-коды для ссылок, текста, мероприятий</p>
+</div>
+
+<div class="grid-2" style="align-items:start;">
+
+  <!-- Одиночный QR -->
+  <div class="card anim-up">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:18px;">Одиночный QR-код</h2>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label class="field-label">Ссылка или текст</label>
+        <input id="qrData" class="input" placeholder="https://example.com или любой текст">
+      </div>
+      <div>
+        <label class="field-label">Подпись под QR</label>
+        <input id="qrCaption" class="input" placeholder="Необязательно">
+      </div>
+      <div>
+        <label class="field-label">Размер блока (2–20)</label>
+        <input id="qrSize" type="range" min="2" max="20" value="10"
+               style="width:100%;accent-color:var(--c-primary);"
+               oninput="document.getElementById('sizeVal').textContent = this.value">
+        <div style="font-size:.8rem;color:var(--c-muted);margin-top:4px;">Размер: <b id="sizeVal">10</b></div>
+      </div>
+
+      <button onclick="generateQR()" class="btn btn-primary btn-block" id="qrBtn">
+        ✨ Создать QR-код
+      </button>
+    </div>
+
+    <div id="qrResult" style="margin-top:24px;text-align:center;display:none;">
+      <div style="margin-bottom:12px;font-size:.8rem;font-weight:600;color:var(--c-muted);text-transform:uppercase;letter-spacing:.05em;">Результат</div>
+      <img id="qrImg" style="max-width:220px;border-radius:12px;box-shadow:var(--shadow-lg);border:1px solid var(--c-border);" alt="QR-код">
+      <div style="margin-top:14px;">
+        <a id="qrDownload" download="qr_code.png" class="btn btn-green">⬇ Скачать PNG</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Пакетная генерация -->
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <div class="card anim-up-1">
+      <h2 style="font-size:1rem;font-weight:700;margin-bottom:8px;">Пакетная генерация</h2>
+      <p style="font-size:.85rem;color:var(--c-muted);margin-bottom:18px;">Загрузи .txt — каждая строка станет отдельным QR. Получишь ZIP-архив.</p>
+      <form action="/qr/batch" method="post" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label class="field-label">TXT файл</label>
+          <input type="file" name="file" accept=".txt" required class="input" style="padding:8px 14px;cursor:pointer;">
+        </div>
+        <div>
+          <label class="field-label">Размер блока</label>
+          <input name="box_size" type="number" min="2" max="20" value="10" class="input">
+        </div>
+        <button type="submit" class="btn btn-green btn-block">📦 Скачать ZIP</button>
+      </form>
+    </div>
+
+    <div class="card anim-up-2" style="background:linear-gradient(135deg,rgba(108,99,255,.05),rgba(139,92,246,.05));border-color:rgba(108,99,255,.15);">
+      <h3 style="font-size:.95rem;font-weight:700;margin-bottom:8px;">💡 Подсказка</h3>
+      <p style="font-size:.85rem;color:var(--c-muted);line-height:1.6;">
+        Для мероприятий вставь в поле ссылку на сайт события. Добавь подпись с названием — она появится под кодом.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function generateQR() {
+  const data    = document.getElementById('qrData').value.trim();
+  const caption = document.getElementById('qrCaption').value.trim();
+  const boxSize = document.getElementById('qrSize').value;
+  const btn     = document.getElementById('qrBtn');
+
+  if (!data) {
+    document.getElementById('qrData').focus();
+    document.getElementById('qrData').style.borderColor = 'var(--c-red)';
+    setTimeout(() => document.getElementById('qrData').style.borderColor = '', 1200);
+    return;
+  }
+
+  btn.textContent = '⏳ Генерирую…';
+  btn.disabled = true;
+
+  const form = new FormData();
+  form.append('data', data);
+  form.append('caption', caption);
+  form.append('box_size', boxSize);
+
+  try {
+    const resp = await fetch('/qr/generate', { method: 'POST', body: form });
+    if (!resp.ok) throw new Error();
+    const blob = await resp.blob();
+    const url  = URL.createObjectURL(blob);
+    document.getElementById('qrImg').src = url;
+    document.getElementById('qrDownload').href = url;
+    const result = document.getElementById('qrResult');
+    result.style.display = 'block';
+    result.style.animation = 'fadeUp .35s ease';
+  } catch {
+    alert('Ошибка при генерации');
+  } finally {
+    btn.textContent = '✨ Создать QR-код';
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('qrData').addEventListener('keydown', e => {
+  if (e.key === 'Enter') generateQR();
+});
+</script>
+{% endblock %}

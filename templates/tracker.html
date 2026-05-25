@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Трекер — Quadra{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>💰 Трекер доходов и расходов</h1>
+  <p>Контролируй свои финансы</p>
+</div>
+
+<!-- Баланс -->
+<div class="stat-card anim-up" style="margin-bottom:24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+  <div>
+    <div style="font-size:.8rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Текущий баланс</div>
+    <div style="font-size:2.5rem;font-weight:800;letter-spacing:-.04em;color:{% if balance >= 0 %}var(--c-green){% else %}var(--c-red){% endif %}">
+      {{ "%.2f"|format(balance) }} ₽
+    </div>
+  </div>
+  <div style="margin-left:auto;">
+    <a href="/tracker/export" class="btn btn-ghost">⬇ Скачать отчёт .txt</a>
+  </div>
+</div>
+
+<div class="grid-3" style="margin-bottom:28px;align-items:start;">
+
+  <!-- Форма добавления -->
+  <div class="card anim-up-1">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:18px;">+ Новая транзакция</h2>
+    <form method="post" action="/tracker/add" style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label class="field-label">Тип</label>
+        <select name="type" class="select">
+          <option value="income">📈 Доход</option>
+          <option value="expense">📉 Расход</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Категория</label>
+        <input name="category" class="input" placeholder="Зарплата, Еда, ЖКХ…" required>
+      </div>
+      <div>
+        <label class="field-label">Сумма, ₽</label>
+        <input name="amount" type="number" step="0.01" min="0.01" class="input" placeholder="0.00" required>
+      </div>
+      <div>
+        <label class="field-label">Дата</label>
+        <input name="date" type="date" class="input" required
+               value="{{ ''|default('') }}">
+      </div>
+      <div>
+        <label class="field-label">Описание</label>
+        <input name="description" class="input" placeholder="Необязательно">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Добавить</button>
+    </form>
+  </div>
+
+  <!-- Фильтр -->
+  <div class="card anim-up-2">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:18px;">🔍 Фильтр</h2>
+    <form method="get" action="/tracker" style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label class="field-label">Период</label>
+        <input name="date_filter" class="input" value="{{ date_filter }}" placeholder="2026 или 2026-05">
+      </div>
+      <div>
+        <label class="field-label">Категория</label>
+        <input name="category" class="input" value="{{ category }}" placeholder="Еда, ЖКХ…">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Применить</button>
+      {% if date_filter or category %}
+      <a href="/tracker" class="btn btn-ghost btn-block" style="text-align:center;">Сбросить</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- График -->
+  <div class="card anim-up-3">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:18px;">📊 По категориям</h2>
+    {% if chart_labels != '[]' %}
+    <canvas id="pieChart" style="max-height:220px;"></canvas>
+    {% else %}
+    <div class="empty-state"><div class="emoji">📊</div><p>Добавь расходы<br>чтобы увидеть график</p></div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Таблица -->
+<div class="card reveal" style="padding:0;">
+  <div style="padding:18px 20px;border-bottom:1px solid var(--c-border);display:flex;align-items:center;justify-content:space-between;">
+    <h2 style="font-size:1rem;font-weight:700;">Транзакции
+      <span style="font-size:.8rem;font-weight:500;color:var(--c-muted);margin-left:6px;">{{ transactions|length }}</span>
+    </h2>
+  </div>
+  {% if transactions %}
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Тип</th>
+          <th>Категория</th>
+          <th>Сумма</th>
+          <th class="hide-mobile">Дата</th>
+          <th class="hide-mobile">Описание</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in transactions %}
+        <tr style="animation: fadeUp .3s {{ loop.index0 * 0.04 }}s ease both;">
+          <td>
+            <span class="badge {% if t.type == 'income' %}badge-green{% else %}badge-red{% endif %}">
+              {% if t.type == 'income' %}↑ Доход{% else %}↓ Расход{% endif %}
+            </span>
+          </td>
+          <td style="font-weight:600;">{{ t.category }}</td>
+          <td style="font-weight:700;color:{% if t.type == 'income' %}var(--c-green){% else %}var(--c-red){% endif %}">
+            {% if t.type == 'income' %}+{% else %}−{% endif %}{{ "%.2f"|format(t.amount) }}
+          </td>
+          <td class="hide-mobile" style="color:var(--c-muted);">{{ t.date }}</td>
+          <td class="hide-mobile" style="color:var(--c-muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ t.description }}</td>
+          <td>
+            <form method="post" action="/tracker/delete/{{ t.id }}">
+              <button type="submit" class="btn btn-sm" style="background:rgba(239,68,68,.08);color:var(--c-red);padding:4px 10px;"
+                      onclick="return confirm('Удалить?')">✕</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><div class="emoji">📭</div><p>Транзакций нет. Добавь первую!</p></div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const labels = {{ chart_labels | safe }};
+const values = {{ chart_values | safe }};
+if (labels.length > 0) {
+  new Chart(document.getElementById('pieChart'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        backgroundColor: ['#6c63ff','#f59e0b','#22c55e','#ef4444','#3b82f6','#8b5cf6','#ec4899','#14b8a6'],
+        borderWidth: 0,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      cutout: '70%',
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } },
+      animation: { animateRotate: true, duration: 900 },
+    }
+  });
+}
+
+// Установить сегодня в поле даты
+const d = document.querySelector('input[name="date"]');
+if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}
