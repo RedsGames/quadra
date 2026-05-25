@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Ежедневный отчёт — {{ report_date }}{% endblock %}
+{% block subtitle %}Автоматический дейли-репорт{% endblock %}
+
+{% block content %}
+<p>Добрый день, <strong>{{ recipient_name | default("Коллеги") }}</strong>!</p>
+<p>Представляем ежедневный отчёт за <strong>{{ report_date }}</strong>.</p>
+
+<h3>Сводка показателей</h3>
+<table>
+  <thead>
+    <tr><th>Метрика</th><th>Значение</th><th>Изменение</th></tr>
+  </thead>
+  <tbody>
+    {% for row in metrics | default([]) %}
+    <tr>
+      <td>{{ row.name }}</td>
+      <td>{{ row.value }}</td>
+      <td class="{{ 'positive' if row.delta >= 0 else 'negative' }}">
+        {{ '+' if row.delta >= 0 else '' }}{{ row.delta }}%
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="3" style="text-align:center;color:#aaa">Нет данных</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if notes %}
+<h3>Примечания</h3>
+<ul>{% for note in notes %}<li>{{ note }}</li>{% endfor %}</ul>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Отчёт{% endblock %}</title>
+  <style>
+    body { margin: 0; padding: 0; background: #f4f4f4; font-family: Arial, Helvetica, sans-serif; color: #333; }
+    .container { max-width: 680px; margin: 24px auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .header { background: #1a73e8; color: #ffffff; padding: 22px 28px; }
+    .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .3px; }
+    .header p  { margin: 6px 0 0; font-size: 13px; opacity: .85; }
+    .body { padding: 24px 28px; }
+    .body h3 { font-size: 15px; color: #1a73e8; margin: 20px 0 8px; border-bottom: 1px solid #e8f0fe; padding-bottom: 4px; }
+    .footer { background: #f8f9fa; padding: 14px 28px; font-size: 12px; color: #888; border-top: 1px solid #e0e0e0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+    th, td { padding: 9px 12px; border: 1px solid #dde3f0; text-align: left; }
+    th { background: #e8f0fe; font-weight: 600; color: #1a73e8; }
+    tr:nth-child(even) td { background: #f9faff; }
+    .positive { color: #2e7d32; font-weight: 600; }
+    .negative { color: #c62828; font-weight: 600; }
+    ul, ol { padding-left: 20px; margin: 8px 0; }
+    li { margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>{% block title %}Отчёт{% endblock %}</h1>
+      <p>{% block subtitle %}{% endblock %}</p>
+    </div>
+    <div class="body">{% block content %}{% endblock %}</div>
+    <div class="footer">Сформировано автоматически &middot; {{ generated_at }}</div>
+  </div>
+</body>
+</html>

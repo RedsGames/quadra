@@ -1,0 +1,26 @@
+; Скопируйте этот файл в config.ini и заполните своими данными.
+; Все значения можно переопределить через переменные окружения
+; (SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD, ...).
+
+[smtp]
+host        = smtp.gmail.com
+port        = 587
+use_tls     = true
+username    = your.email@gmail.com
+; Для Gmail используйте App Password (не основной пароль аккаунта):
+; https://myaccount.google.com/apppasswords
+password    = your_app_password_here
+sender_name = Auto Reporter
+sender_email = your.email@gmail.com
+
+[app]
+; Путь к файлу очереди (создаётся автоматически)
+queue_file    = data/queue.json
+; Директория с HTML-шаблонами
+templates_dir = templates
+; Файл журнала (ротация: 5 МБ × 3 резервных копии)
+log_file      = logs/app.log
+; Максимальное число повторных попыток перед статусом "failed"
+max_retries   = 3
+; Пауза между попытками (секунды) — используется внешним планировщиком
+retry_delay   = 60
