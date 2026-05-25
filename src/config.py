@@ -55,7 +55,7 @@ def load_config(config_path: Optional[str] = None) -> AppConfig:
     if config_path is None:
         config_path = Path(__file__).parent.parent / "config.ini"
 
-    parser.read(str(config_path))
+    parser.read(str(config_path), encoding="utf-8")
 
     def _get(section: str, key: str, fallback: str = "") -> str:
         return parser.get(section, key, fallback=fallback)
@@ -75,7 +75,9 @@ def load_config(config_path: Optional[str] = None) -> AppConfig:
     return AppConfig(
         smtp=smtp,
         queue_file=Path(
-            os.getenv("QUEUE_FILE", _get("app", "queue_file", str(base_dir / "data" / "queue.json")))
+            os.getenv(
+                "QUEUE_FILE", _get("app", "queue_file", str(base_dir / "data" / "queue.json"))
+            )
         ),
         templates_dir=Path(
             os.getenv("TEMPLATES_DIR", _get("app", "templates_dir", str(base_dir / "templates")))

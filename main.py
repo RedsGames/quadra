@@ -117,7 +117,9 @@ def _build_parser() -> argparse.ArgumentParser:
     p_send = sub.add_parser("send", help="Send an email immediately")
     p_send.add_argument("--to", required=True, help="Recipient(s), comma-separated")
     p_send.add_argument("--subject", required=True, help="Email subject")
-    p_send.add_argument("--template", required=True, help="Template filename, e.g. daily_report.html")
+    p_send.add_argument(
+        "--template", required=True, help="Template filename, e.g. daily_report.html"
+    )
     p_send.add_argument("--context", default=None, help="JSON object of template variables")
 
     # --- queue ---

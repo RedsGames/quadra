@@ -1,0 +1,20 @@
+[
+  {
+    "item_id": "33940acb-51da-40fb-9bce-4e73327f7440",
+    "created_at": "2026-05-25T21:32:53.090526",
+    "status": "pending",
+    "retries": 0,
+    "last_error": null,
+    "sent_at": null,
+    "message": {
+      "to": [
+        "test@example.com"
+      ],
+      "subject": "Test",
+      "body_html": "<!DOCTYPE html>\n<html lang=\"ru\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Ежедневный отчёт — 2026-05-25</title>\n  <style>\n    body { margin: 0; padding: 0; background: #f4f4f4; font-family: Arial, Helvetica, sans-serif; color: #333; }\n    .container { max-width: 680px; margin: 24px auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,.06); }\n    .header { background: #1a73e8; color: #ffffff; padding: 22px 28px; }\n    .header h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .3px; }\n    .header p  { margin: 6px 0 0; font-size: 13px; opacity: .85; }\n    .body { padding: 24px 28px; }\n    .body h3 { font-size: 15px; color: #1a73e8; margin: 20px 0 8px; border-bottom: 1px solid #e8f0fe; padding-bottom: 4px; }\n    .footer { background: #f8f9fa; padding: 14px 28px; font-size: 12px; color: #888; border-top: 1px solid #e0e0e0; }\n    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }\n    th, td { padding: 9px 12px; border: 1px solid #dde3f0; text-align: left; }\n    th { background: #e8f0fe; font-weight: 600; color: #1a73e8; }\n    tr:nth-child(even) td { background: #f9faff; }\n    .positive { color: #2e7d32; font-weight: 600; }\n    .negative { color: #c62828; font-weight: 600; }\n    ul, ol { padding-left: 20px; margin: 8px 0; }\n    li { margin: 4px 0; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>Ежедневный отчёт — 2026-05-25</h1>\n      <p>Автоматический дейли-репорт</p>\n    </div>\n    <div class=\"body\">\n<p>Добрый день, <strong>Test</strong>!</p>\n<p>Представляем ежедневный отчёт за <strong>2026-05-25</strong>.</p>\n\n<h3>Сводка показателей</h3>\n<table>\n  <thead>\n    <tr><th>Метрика</th><th>Значение</th><th>Изменение</th></tr>\n  </thead>\n  <tbody>\n    \n    <tr>\n      <td>Sales</td>\n      <td>100</td>\n      <td class=\"positive\">\n        +5%\n      </td>\n    </tr>\n    \n  </tbody>\n</table>\n\n\n</div>\n    <div class=\"footer\">Сформировано автоматически &middot; 2026-05-25 09:00</div>\n  </div>\n</body>\n</html>",
+      "body_text": null,
+      "cc": [],
+      "bcc": []
+    }
+  }
+]
